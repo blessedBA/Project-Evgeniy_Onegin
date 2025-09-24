@@ -4,9 +4,14 @@
 #include <cstdlib>
 #include <stdio.h>
 
+#define DEADINSIDE 1000 - 7
+
 const int TYPOE_SOZDANIE = 47;
 void START_BREDOGENERATOR(char** dynarr, char* key_word)
 {
+    assert(dynarr != nullptr);
+    assert(key_word != nullptr);
+    
     int HROMOSOMES = 44, transformer = 1;
     int ch = 0;
     printf("ИТАК, сколько говна вы хочите???\n");
@@ -61,5 +66,5 @@ void GLAVNOE_RAZEBALOVO (char** spisok_kuchek_govna, int count_govna)
 void crashProgramm()
 {
     char* ch = nullptr;
-    *ch = 54;
+    *ch = DEADINSIDE;
 }

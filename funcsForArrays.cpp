@@ -7,24 +7,30 @@
 void printArray (char** dynamicArray, const int count_rows, FILE* outputSource,
                  int mode, int number_row)
 {
-    printf("count_rows(printArray) = %d\n", count_rows);
+    assert(dynamicArray != nullptr && "invalid dynamicArray\n");
+    assert(outputSource != nullptr && "invalid outputSource\n");
+    //printf("count_rows(printArray) = %d\n", count_rows);
     switch (mode)
     {
         case 0:
-            for (size_t y = 0; y < count_rows; y++)
+            for (int y = 0; y < count_rows; y++)
             {
-                fprintf(outputSource, "[%4zu] = %s\n", y, dynamicArray[y]);
+                fprintf(outputSource, "[%4d] = %s\n", y, dynamicArray[y]);
             }
             break;
         case 1:
-            printf("[%4zu] = %s\n", number_row, dynamicArray[number_row]);
+            printf("[%4d] = %s\n", number_row, dynamicArray[number_row]);
             break;
+        default:
+            printf("invalid mode\n");
     }
 
 }
 
 int getNumberRows (const char* buffer, const ssize_t size_file)
 {
+    assert(buffer != nullptr && "invalid buffer\n");
+
     int count_rows = 0;
     for (int i = 0; i < size_file; i++)
     {
@@ -48,9 +54,11 @@ int* getAddress (int array[][4], const size_t y, const size_t x)
 
 int findMaxString (FILE* inputSource, int* count_all_symbols)
 {
+    assert(inputSource != nullptr && "invalid inputSource\n");
+    assert(count_all_symbols != nullptr && "invalid pointer of count_all_symbols\n");
     int max = 0, count_symbols_in_one_row = 0;
     int ch = 0;
-    while(ch = fgetc(inputSource) != '\n')
+    while((ch = fgetc(inputSource)) != '\n')
     {
         if (ch == EOF)
         {
@@ -73,7 +81,7 @@ int findMaxString (FILE* inputSource, int* count_all_symbols)
     return max;
 }
 
-void freeDynamicArray (char** dynamicArray, const int count_rows)
+/*void freeDynamicArray (char** dynamicArray, const int count_rows)
 {
     assert(dynamicArray != nullptr);
     for (int y = 0; y < count_rows; y++)
@@ -81,10 +89,12 @@ void freeDynamicArray (char** dynamicArray, const int count_rows)
         free(dynamicArray[y]);
     }
     free(dynamicArray);
-}
+}*/
 
 void swapLinesWithStrcpy (char** dynamicArray, const int string1, const int string2)
 {
+    assert(dynamicArray != nullptr && "invalid pointer to dynamicArray!!!\n");
+
     char temp[100] = {};
     strcpy(temp, dynamicArray[string1]);
     strcpy(dynamicArray[string1], dynamicArray[string2]);
@@ -95,107 +105,76 @@ void swapLinesWithStrcpy (char** dynamicArray, const int string1, const int stri
 int customStrcmp (const char* str1, const char* str2) // ломается при полном совпадении подстрок
                                                       // и одновременно при разном размере строк
 {
+    assert(str1 != nullptr && "invalid pointer of str1!!!\n");
+    assert(str1 != nullptr && "invalid pointer of str2!!!\n");
+
     int delta_symbols = 0;
     int i = 0;
     if (isalpha(str1[0] == 0) || isalpha(str2[0] == 0))
     {
-        printf("%s\n", str1);
-        printf("%s\n", str2);
         i = 1;
     }
     for (; (str1[i] != '\0') && (str2[i] != '\0'); i++)
     {
-        if (islower(str1[i]) == 0)
-        {
-            tolower(str1[i]);
-        }
-        if (islower(str2[i]) == 0)
-        {
-            tolower(str2[i]);
-        }
+        tolower(str1[i]);
+        tolower(str2[i]);
+
         delta_symbols = str1[i] - str2[i];
         if (delta_symbols != 0)
         {
-            break;
+            return delta_symbols;
         }
     }
 
-    return delta_symbols;
+    return 0;
 }
 
 // ОРИГИНАЛ ФУНКЦИИ customStrcmp - В ФАЙЛЕ /Users/pashamalyshev/Documents/GitHub/DEDs_small_tasks/customStringFuncs.cpp
 int reverseCustomStrcmp (const char* str1, const char* str2) // ломается при полном совпадении подстрок
-                                                      // и одновременно при разном размере строк
+                                                             // и одновременно при разном размере строк
 {
+    assert(str1 != nullptr && "invalid pointer of str1!!!\n");
+    assert(str1 != nullptr && "invalid pointer of str2!!!\n");
+
     int delta_symbols = 0;
     int i = 0;
-    if (isalpha(str1[0] == 0) || isalpha(str2[0] == 0))
+    for (int ind = 0; ind < 3; ind++)
     {
-        printf("%s\n", str1);
-        printf("%s\n", str2);
-        i = 1;
+        if ((isalpha(str1[ind]) == 0) || (isalpha(str2[ind]) == 0))
+        {
+            i = ind + 1;
+        }
     }
     for (; (*(str1 - i) != '\0') && (*(str2 - i) != '\0'); i++)
     {
-        if (islower(*(str1 - i)) == 0)
-        {
-            tolower(*(str1 - i));
-        }
-        if (islower(*(str2 - i)) == 0)
-        {
-            tolower(*(str2 - i));
-        }
+        tolower(*(str1 - i));
+        tolower(*(str2 - i));
+
         delta_symbols = *(str1 - i) - *(str2 - i);
         if (delta_symbols != 0)
         {
-            break;
+            return delta_symbols;
         }
     }
 
-    return delta_symbols;
+    return 0;
 }
 
-int KOSTYL_reverseCustomStrcmp (char* str1, char* str2)
-{
-    char* rptr_to_second_str = str1 + strlen(str1) - 1;
-    char* rptr_to_first_str  = str2 + strlen(str2) - 1;
-    int delta_symbols = 0;
-    int i = 0;
-    if (isalpha(rptr_to_second_str[0] == 0) || rptr_to_first_str[0] == 0)
-    {
-        printf("%s\n", str1);
-        printf("%s\n", str2);
-        i = 1;
-    }
-    for (; i != (strlen(str1) - 1) && i != (strlen(str2) - 1); i++)
-    {
-        if (islower(*(rptr_to_second_str - i)) == 0)
-        {
-            tolower(*(rptr_to_second_str - i));
-        }
-        if (islower(*(rptr_to_first_str - i)) == 0)
-        {
-            tolower(*(rptr_to_first_str - i));
-        }
-        delta_symbols = *(rptr_to_second_str - i) - *(rptr_to_first_str - i);
-        if (delta_symbols != 0)
-        {
-            break;
-        }
-    }
 
-    return delta_symbols;
-}
-
-char* lastChar(char* s)
+char* lastChar(const char* s)
 {
+    assert(s != nullptr && "invalid adress of char!!!\n");
     size_t len = strlen(s);
-    return (len == 0) ? s : (s + len - 1);
+
+    return (len == 0) ? (char*)s : ((char*)s + len - 1);
 }
 
-void swapLinesWithPointers (char** dyn_array_pointers, const int str1, const int str2)
+void swapLinesWithPointers (char** dynArraychar, const int str1, const int str2)
 {
-    char* temp = dyn_array_pointers[str1];
-    dyn_array_pointers[str1] = dyn_array_pointers[str2];
-    dyn_array_pointers[str2] = temp;
+    assert(dynArraychar && "invalid pointer to dynArraychar!!!\n");
+
+    char* temp = dynArraychar[str1];
+    dynArraychar[str1] = dynArraychar[str2];
+    dynArraychar[str2] = temp;
+
 }
